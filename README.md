@@ -1,3 +1,3 @@
-# AWS_Config
+# AWS_Code
 
-AWS Files for Cloud Managment Configuration
+repo for AWS management code.  All code should be considered beta.
