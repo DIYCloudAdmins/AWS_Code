@@ -13,7 +13,7 @@ To depoly edit script as needed rename the validate_tags_main_vpcs.py* to lambda
 *it is possible to change the lambda handler name instead of the file name, to me this is not prefered.
 
 
-#AutoSchedule
+# AutoSchedule
 
 Auto schedule stops and starts EC2 instances based on a schedule defined in the "autoSchedule" tag applied to the resources where the stop and start are desired.
 
@@ -27,7 +27,7 @@ The autoSchedule key value must be in the form of
 *startupHour: 24 hour based (two digit format) hour the instance will be started (03 = 03:00am, 15 = 03:00pm)
 startupDays: days that startup should take place (mon=Monday,tue=Tuesday,wed=Wednesday,thur=Thursday,fri=Friday,sat=Saturday,sun=Sunday).  It is Ok to leave any days out that a shutdown is not desired.
 
-###To deploy
+### To deploy
 this scrip relies on the pytz package. install the package to the same folder you are devloping the scrip in: "pip install -t "c:\directory\structure\where\script\exists" pytz
  
  * rename AutoScheduleInstances.py to lambda_function.py*
