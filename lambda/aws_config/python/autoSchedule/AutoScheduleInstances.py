@@ -1,15 +1,33 @@
+import AS_Helper
 import boto3
 import json
- 
-def lambda_handler(event, context):
-    outMsg=[]  
-    outMsg.append("starting nightly stop of EC2 instances who are tagged OvernightTerm=Yes")
-    print("starting nightly stop of EC2 instances who are tagged OvernightTerm=Yes")
-    tagkey="OvernightTerm"
+
+def evaluateTag(tagValue):
+    
+    configlist = tagValue.split(";")
+
+    returnMessage = "noAction"
+    
+    schedule = AS_Helper.evaluateSchedule(configlist)
+    if ( 
+        schedule.shutdown == True and schedule.shutdownHourMatch == True and schedule.shutdownToday == True
+        ):
+            returnMessage = "shutDown"
+    if (
+        schedule.startup == True and schedule.startupHourMatch == True and schedule.startupToday == True
+        ):
+            returnMessage = "startUp"
+    return returnMessage
+
+def identifyInstances():
+
+    outMsg=[] 
+    print("starting EC2 AutoScheduler")
+    tagkey="autoSchedule"
     client=boto3.client('ec2')
     ec2inst=boto3.resource('ec2')
     response=client.describe_instances(
-        Filters = [{'Name': 'tag:OvernightTerm', 'Values': ['Yes']},{'Name': 'instance-state-name','Values': ['running']}]
+        Filters = [{'Name': 'tag:autoSchedule', 'Values': ['*']},{'Name': 'instance-state-name','Values': ['running']}]
     )
       
     for reservation in response["Reservations"]:
@@ -19,16 +37,17 @@ def lambda_handler(event, context):
             for tags in EC2instance.tags:
                 if tags["Key"] == 'Name':
                     instanceName = (tags["Value"])
-            print(instanceID  + " - " + instanceName + ": stopping")
-            msg = instanceID
-            outMsg.append(msg)        
-            id=[instanceID]
+                if tags["Key"] == "autoSchedule":
+                    tagSchedule = (tags["Value"])
+                    tagAction = evaluateTag(tagSchedule)
+            if tagAction == "shutDown":
+                print(instanceID  + " - " + instanceName + " - stoping")
+            if tagAction == "startUp":
+                print(instanceID  + " - " + instanceName + " - starting")
 
-# client.stop_instances(InstanceIds=id)
-    snsclient = boto3.client('sns')
-    response = snsclient.publish(
-        TargetArn="arn:aws:sns:us-east-1:511296683960:EC2_AutoStop",
-        Message=json.dumps(outMsg, sort_keys=True, indent=4, separators=(',', ': '))
-    )
-        
-    return "completed stopping instances"
+
+    return "completed autoSchedule Sequence"
+
+def lambda_handler(event, context):
+    x = identifyInstances()
+    print(x)
