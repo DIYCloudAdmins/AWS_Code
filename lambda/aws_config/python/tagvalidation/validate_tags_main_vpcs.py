@@ -13,9 +13,10 @@
 
 
 
-
-import json
 import boto3
+import json
+from datetime import datetime as dt, timedelta
+from dateutil import relativedelta as rt
 
 
 # Specify desired resource types to validate
@@ -48,6 +49,10 @@ def find_violation(current_tags, required_tags):
     return  violation
 
 def evaluate_compliance(configuration_item, rule_parameters):
+    
+    ec2 = boto3.resource('ec2')
+    instance = ec2.Instance(configuration_item["resourceId"])
+    
     if configuration_item["resourceType"] not in APPLICABLE_RESOURCES:
         return {
             "compliance_type": "NOT_APPLICABLE",
@@ -61,7 +66,7 @@ def evaluate_compliance(configuration_item, rule_parameters):
             "annotation": "The configurationItem was deleted and therefore cannot be validated."
         }
     #filter out legacy VPC
-    if current_vpc = configuration_item["configuration"].get("vpc_id") == "vpc-a859a8c6":
+    if instance.vpc_id != "vpc-a859a8c6":
          return {
             "compliance_type": "NOT_APPLICABLE",
             "annotation": "This resource resides in the legacy VPC"
@@ -71,9 +76,51 @@ def evaluate_compliance(configuration_item, rule_parameters):
     violation = find_violation(current_tags, rule_parameters)        
 
     if violation:
+        volumes = instance.volumes.all()
+        for v in volumes:
+            print(v.id)
+            devices = [d['Device'] for d in v.attachments]
+            for x in devices:
+                violationExtention = "...disk = " + x + " ...... "
+                volCreateTime = v.create_time.replace(tzinfo=None)
+                relTime = rt.relativedelta(dt.now(), volCreateTime)
+                reportList = []
+                shutdownList = []
+                terminateList = []
+                sendReportMessage = False
+                sendshutdownMessage = False
+                sendTerminateMessage = False
+                violationHours =  int(relTime.hours)
+                violationDays = int(relTime.days)
+                print(violationHours)
+                print(violationDays)
+                if (violationHours < 4 and violationDays == 0):
+                    sendReportMessage = False
+                    violationExtention = violationExtention + "instance " + configuration_item["resourceId"] + " is within expected time frame."
+                    print(violationExtention)
+                    break
+                if ((violationHours >= 4 and violationHours < 10) and violationDays == 0):
+                    sendReportMessage = True
+                    reportList.append(configuration_item["resourceId"])
+                    violationExtention = violationExtention + "instance " + configuration_item["resourceId"] + " will be shutdown soon!"
+                    print(violationExtention)
+                    break
+                if ((violationHours >=10 and violationDays > 0) and violationDays < 5):
+                    sendshutdownMessage = True
+                    shutdownList.append(configuration_item["resourceId"])
+                    violationExtention = violationExtention + "instance " + configuration_item["resourceId"] + " is being shutdown, and will be terminated soon!"
+                    print(violationExtention)
+                    print("shutdown")
+                    break
+                if (violationDays >= 5):
+                    sendTerminateMessage = True
+                    terminateList.append(configuration_item["resourceId"])
+                    violationExtention = violationExtention + "instance " + configuration_item["resourceId"] + " is being terminated!  "
+                    print (violationExtention)
+                    break
         return {
             "compliance_type": "NON_COMPLIANT",
-            "annotation": violation
+            "annotation": violation + "\r\n" + "....root disk created " + str(violationDays) + " days and " + str(violationHours) + " hours ago." + "\r\n" + violationExtention 
         }
 
     return {
