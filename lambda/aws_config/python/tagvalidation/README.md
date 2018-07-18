@@ -7,6 +7,14 @@ Script relies on python-dateutil.  to install this package "pip install -t "c:\d
 
 Within the script there is line that filters VPCs "if instance.vpc_id == "vpc-a859a8c6":"  change this line (or delete the clause) to filter on different VPCs
 
-To depoly edit script as needed rename the validate_tags_main_vpcs.py* to lambda_function.py and zip that file and the dateutil directory into a zip file and upload to a lambda function.  Then create a config rule to use the function.
+To depoly edit script as needed rename the Validate_tags.py* to lambda_function.py and zip that file and the dateutil directory into a zip file and upload to a lambda function.
+
+### This function needs a config rule to function.
+The config rule resource type should be: EC2 Instance
+Config rule parameters are the key and values you would like to test for.
+Key:Name Value:* will ensure the name tag is applied (any value is valid)
+Key:Department Value:IT,Sale,Engineering will ensure the Dapartment tag is applied and only be considered valide if IT,Sales, or Engineering are in the Value field.
+
+
 
 *it is possible to change the lambda handler name instead of the file name, to me this is not prefered.
