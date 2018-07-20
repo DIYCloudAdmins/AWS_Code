@@ -7,7 +7,7 @@ Script relies on python-dateutil.  to install this package "pip install -t "c:\d
 
 Within the script there is line that filters VPCs "if instance.vpc_id == "vpc-a859a8c6":"  change this line (or delete the clause) to filter on different VPCs
 
-###To deploy
+### To deploy
 To depoly edit script as needed rename the validate_tags_main_vpcs.py* to lambda_function.py and zip that file and the dateutil directory into a zip file and upload to a lambda function.  Then create a config rule to use the function.
 
 *it is possible to change the lambda handler name instead of the file name, to me this is not prefered.
@@ -36,3 +36,19 @@ this scrip relies on the pytz package. install the package to the same folder yo
  * add the tag autoSchedule with the appropriate value to any instance you would like to schedule
  
 
+# BillingTagReport
+
+creates an XLS file with the following tags (per ec2 resource): 
+ InstanceID
+ Name
+ Owner
+ Project
+ Component
+ Environment
+
+creates an XLS file with the following tags (per ec2 resource): InstanceID Name Owner Project Component Environment
+
+### To deploy
+code requires the xksxwriter module to work. to install "pip install -t c:\local\directory\were\pyfile\is xlsxwriter"code requires the xksxwriter module to work. to install "pip install -t c:\local\directory\were\pyfile\is xlsxwriter"
+
+This should be run locally assuming you also have boto3 and the AWS CLI installed.
