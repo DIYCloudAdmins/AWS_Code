@@ -7,7 +7,7 @@ workbook = xlsxwriter.Workbook("Audit_Report.xlsx")
 #Standard variables I might want to use
 vpcIDs = [{"Name":"VPC-Apps-E1-01","ID":"vpc-7676eb0d"},{"Name":"VPC-INFRA-E1-01","ID":"vpc-336cf148"},{"Name":"AppsDev_Legacy_10.4.0.0/16","ID":"vpc-a859a8c6"}]
 regionName = "us-east-1"
-accountID = "511296683960"
+accountID = "xxxxxxxxxxxxxxx"
 
 
 #-------------------------------Does the actual work of writing to excel.  output argument is in the form of a list, wrkSheet is a sheet object------
