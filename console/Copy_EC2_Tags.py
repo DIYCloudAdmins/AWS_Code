@@ -2,10 +2,10 @@ import boto3
 from datetime import datetime
 #stolen and modified from: https://gist.github.com/mlapida/931c03cce1e9e43f147b
 is_test = True
+outPutToPrint = False
 outPutToText = True
 if outPutToText == True:
     logFile = open("Copy_EC2_Tags_Log" + str(datetime.now()).replace(" ", "").replace(":",".") + ".txt","w")
-outPutToPrint = False
 instances = boto3.resource('ec2').instances.all()
 instanceID = ""
 
@@ -19,11 +19,11 @@ def output(tagString):
     global outPutToText
 
     for labels in [" ", "\'", "{", "}", "[", "]"]:
-        tagDictionary = tagDictionary.replace(labels,"")
-    if outPutToPrint = True:
+        tagString = tagString.replace(labels,"")
+    if outPutToPrint == True:
         print(tagDictionary)
-    if outPutToText = True:  
-        logFile.write(tagDictionary)
+    if outPutToText == True:  
+        logFile.write(tagString)
         logFile.write("\n")
 
 for instance in instances:
