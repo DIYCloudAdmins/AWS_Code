@@ -28,8 +28,6 @@ for volume in volumes:
         worksheet.write(x,6,str(currentVolume.iops))
         worksheet.write(x,7,currentVolume.snapshot_id)
         x += 1
-        if x == 15:
-            break       
     if testing == False:
         currentVolume.delete()
     
