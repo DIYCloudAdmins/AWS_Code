@@ -37,7 +37,7 @@ for instance in instances:
         output(instance.id)
         output(f"{vol.attachments[0]['Device']}: {copyable_tags}")
         if not is_test:
-            vol.create_tags(Tags=copyable_tags)
+            vol.create_tags(Tags=copyable_tags)  
 
     # Tag the Elastic Network Interfaces
     for eni in instance.network_interfaces:
