@@ -23,7 +23,8 @@ for reservation in response["Reservations"]:
         currDict ={}
         currDict["InstanceID"] = instanceID
         for tagPairs in EC2instance.tags:
-            currDict[tagPairs["Key"]] = tagPairs["Value"]
+            if tagPairs != None:
+                currDict[tagPairs["Key"]] = tagPairs["Value"]
         instanceList.append(currDict)
 
 #write headers to the worksheet
