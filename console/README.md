@@ -19,3 +19,7 @@ Prints all security group rules with ingress and egress rules.
 ### Unused_Volumes_with_Snapshots.py
 Prints all volumes that are unattached and that have a snapshot associated with them.
 
+### ec2_noProjectTags.py
+idetifies all ec2 instances without a project tag:
+    1. emails warning after specified time
+    2. terminates instances after alternative specified time
