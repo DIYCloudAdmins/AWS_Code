@@ -23,3 +23,7 @@ Prints all volumes that are unattached and that have a snapshot associated with 
 idetifies all ec2 instances without a project tag:
     1. emails warning after specified time
     2. terminates instances after alternative specified time
+
+### ec2_tag_info.py
+alternative script to list all ec2 tags
+
