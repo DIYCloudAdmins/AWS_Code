@@ -50,11 +50,11 @@ def hoursSinceCreation(creationTime: datetime)->bool:
     
     return hoursSinceCreation
 
-def sendSeS(emailText: str):
+def sendSeS(emailText: str, sendToList: list):
 
     sesClient = boto3.client('ses')
-
-    emailSendAddresses = ['Paul.Beauvais@hibu.com']
+    sendToList = sendTo
+    emailSendAddresses = sendToList
     emailFromAddress = 'Paul.Beauvais@hibu.com'
 
     subject = 'Critical Warning - EC2 Instance Terminations'
@@ -75,6 +75,8 @@ if __name__ == '__main__':
 
     reportTime = 2
     terminateTime = 6
+
+    emailTo = ['Paul.Beauvais@hibu.com']
     
     ec2client = boto3.client('ec2')
     response = ec2client.describe_instances(Filters=[{'Name':'instance-state-name','Values':['running','stopped','stopping']}])
@@ -119,4 +121,4 @@ if __name__ == '__main__':
     emailText = notificationText(reportList, terminateList, reportTime, terminateTime)
 
     print(emailText)
-    sendSeS(emailText)
+    sendSeS(emailText, emailTo)
