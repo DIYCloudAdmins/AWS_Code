@@ -6,23 +6,27 @@ def getSession(accountId:str, Role:str)->object:
 
     # if useEC2IAMRole:
     # boto3 STS code for instance IAM role
-    sessionName = '%s-%s' % ("TagFlowDown", role)
-    stsClient = boto3.client("sts")
-    assumedRoleObject = stsClient.assume_role(
-        RoleArn=arn,
-        RoleSessionName=sessionName
-    )
-    credentials = assumedRoleObject['Credentials']
-    accessKey = credentials['AccessKeyId']
-    secretKey = credentials['SecretAccessKey']
-    sessionToken = credentials['SessionToken']
-    newSession = boto3.session.Session(aws_access_key_id=accessKey,
-                                           aws_secret_access_key=secretKey,
-                                           aws_session_token=sessionToken)
-    return newSession
+    try:
+        sessionName = '%s-%s' % ("TagFlowDown", role)
+        stsClient = boto3.client("sts")
+        assumedRoleObject = stsClient.assume_role(
+            RoleArn=arn,
+            RoleSessionName=sessionName
+        )
+        credentials = assumedRoleObject['Credentials']
+        accessKey = credentials['AccessKeyId']
+        secretKey = credentials['SecretAccessKey']
+        sessionToken = credentials['SessionToken']
+        newSession = boto3.session.Session(aws_access_key_id=accessKey,
+                                            aws_secret_access_key=secretKey,
+                                            aws_session_token=sessionToken)
+        return newSession
+    except:
+        return None
+    
 
 
-def getAccounts(ignoreNamedAccounts:list = [])->list:
+def getAccounts(ignoreNamedAccounts:list = [])->dict:
     '''Returns a list of dictionaries with information regarding all
        accounts in the organization.  Accounts that should not be inlcuded
        can be passes as a list [account1, account2, account3]'''
@@ -65,7 +69,3 @@ def getAccount(accountId: str)->dict:
         'accountStatus': response['Account']['Status']}
 
     return accountDetails
-
-
-x = getAccount('511296683960')
-print(x)
