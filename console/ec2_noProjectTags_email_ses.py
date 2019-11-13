@@ -9,6 +9,7 @@
 import boto3
 import json
 from datetime import datetime, timezone
+import AWS_SessionManager as sm 
 
 
 def ProjectTag(listOfTagDicts: list)->bool:
@@ -65,32 +66,28 @@ def sendSeS(emailText: str, sendToList: list):
     response = sesClient.send_email(Source= emailFromAddress, Destination = {'ToAddresses': emailSendAddresses}, Message = message)
 
 
+def getNonTaggedInstances(session: object, reportTime, terminateTime)->dict:
+    '''given a AWS session object returns EC2 Instances that do not have a projectTag
+        session = valid AWS session object, reportTime = time allowed before added to reported list,
+        terminateTime = time allowed before the terminate list
+        {report:[list of instances to report on], terminate: [list of instances to terminate]}'''
 
-
-if __name__ == '__main__':
-
-    # set to True if script should terminate instances without project tags
-    # That have been active longer that the Terminate Time
-    teminateActive = False
-
-    reportTime = 2
-    terminateTime = 6
-
-    emailTo = ['Paul.Beauvais@hibu.com']
-    
-    ec2client = boto3.client('ec2')
-    response = ec2client.describe_instances(Filters=[{'Name':'instance-state-name','Values':['running','stopped','stopping']}])
-
+    session = session
+    reportTime = reportTime
+    terminateTime = terminateTime
     noTagList = []
     reportList = []
     terminateList = []
 
-    
+    ec2 = session.client('ec2')
+    response = ec2.describe_instances(Filters=[{'Name':'instance-state-name','Values':['running','stopped','stopping']}])
+
     for reservation in response["Reservations"]:
         for instance in reservation["Instances"]:
 
             tempReportDict = {}
             tempTerminateDict = {}
+
 
             if 'Tags' in instance.keys():
                 hasProjectTag = ProjectTag(instance["Tags"])
@@ -116,9 +113,35 @@ if __name__ == '__main__':
                 
                 if len(tempTerminateDict) > 0:
                     terminateList.append(tempTerminateDict)
+    return {'report': reportList, 'terminate':terminateList}
 
 
-    emailText = notificationText(reportList, terminateList, reportTime, terminateTime)
+if __name__ == '__main__':
 
-    print(emailText)
-    sendSeS(emailText, emailTo)
+    # set to True if script should terminate instances without project tags
+    # That have been active longer that the Terminate Time
+    teminateActive = False
+    role = 'Management_Admins'
+
+    accounts =  sm.getAccounts()
+
+    unaccessableAccounts = []
+    
+    for account in accounts:
+
+        session = sm.getSession(account['accountId'], role)
+        
+
+        if session !=None:  
+            nonTagged = getNonTaggedInstances(session,2,6)
+            print(nonTagged['report'])
+            print(nonTagged['terminate'])
+
+    emailTo = ['Paul.Beauvais@hibu.com']
+  
+
+
+    # emailText = notificationText(reportList, terminateList, reportTime, terminateTime)
+
+    # print(emailText)
+    # sendSeS(emailText, emailTo)
