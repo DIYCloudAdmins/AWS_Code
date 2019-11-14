@@ -111,3 +111,4 @@ console/test.py
 aws_ec2_fullDataSet.csv
 serversInfo.html
 console/.vscode/launch.json
+output.html
