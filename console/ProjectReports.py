@@ -47,7 +47,7 @@ if __name__ == '__main__':
         aAccounts = pd.DataFrame(unaccessableAccounts)
         message = mw.messageSection('Critical: The Following Accounts Are inaccessable')
         message.description = f'Listed accounts were not accessable with the role: {role}'
-        message.message = aAccounts.to_html()
+        message.message = aAccounts.to_html(index=False)
         messages.append(message)
 
     
@@ -56,7 +56,7 @@ if __name__ == '__main__':
         uGroups = pd.DataFrame(unUsedSecurityGroups)
         message = mw.messageSection('Critical: Disconnected Security Groups')
         message.description = f'The following Security groups do not appear to be associated with a resource'
-        message.message = uGroups.to_html()
+        message.message = uGroups.to_html(index=False)
         messages.append(message)
 
     # build missing Project Tag message:
@@ -64,10 +64,10 @@ if __name__ == '__main__':
     if len(noProjectDataFrame.columns) !=0:
         message = mw.messageSection('Critical: Instances without Project Tag')
         message.description = f'The following instances are missing the Project Tag'
-        message.message = noProjectDataFrame.to_html()
+        message.message = noProjectDataFrame.to_html(index=False)
         messages.append(message)
     
-for m in messages:
-    print(m)
 
-
+with open('output.html', 'w') as out_file:
+    for m in messages:
+        out_file.write(str(m))
