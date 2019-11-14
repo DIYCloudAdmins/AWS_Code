@@ -59,6 +59,7 @@ if __name__ == '__main__':
         message.message = uGroups.to_html(index=False)
         messages.append(message)
 
+
     # build missing Project Tag message:
     noProjectDataFrame = EC2DataFrame[EC2DataFrame.project.isnull()][['vpcId','accountName', 'instanceId', 'instanceState']]
     if len(noProjectDataFrame.columns) !=0:
