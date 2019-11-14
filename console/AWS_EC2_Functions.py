@@ -78,6 +78,7 @@ def getUnusedSecurityGroups(session: object, accountDict: dict)->list:
     ec2 = session.resource('ec2')
     all_groups = []
     security_groups_in_use = []
+    
     # Get ALL security groups names
     security_groups_dict = client.describe_security_groups()
     security_groups = security_groups_dict['SecurityGroups']
