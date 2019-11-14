@@ -55,12 +55,6 @@ class messageSection:
         {self.messageText}<br><br>\n{self.footerText}'''
         
         return retStr
- 
 
-m = messageSection('testHeader', message='testmessage')
-m.description = 'test Description'
-m.footer = 'test footer'
-
-print(str(m))
 
 
