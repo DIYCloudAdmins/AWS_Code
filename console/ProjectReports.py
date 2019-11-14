@@ -12,7 +12,7 @@ if __name__ == '__main__':
     accounts =  sm.getAccounts()
 
     unaccessableAccounts = []
-    role = 'Management_Admins'
+    role = 'Virtualization_Admins'
 
     messages = []
 
