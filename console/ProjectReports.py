@@ -60,13 +60,14 @@ if __name__ == '__main__':
         messages.append(message)
 
     # build missing Project Tag message:
-    noProjectDataFrame = EC2DataFrame[EC2DataFrame.project.isnull()][['vpdId','accountName', 'instanceId', 'instanceState']].to_html()
+    noProjectDataFrame = EC2DataFrame[EC2DataFrame.project.isnull()][['vpcId','accountName', 'instanceId', 'instanceState']]
     if len(noProjectDataFrame.columns) !=0:
         message = mw.messageSection('Critical: Instances without Project Tag')
         message.description = f'The following instances are missing the Project Tag'
-        message.message = uGroups.to_html()
+        message.message = noProjectDataFrame.to_html()
         messages.append(message)
     
-print(messages)
+for m in messages:
+    print(m)
 
 
