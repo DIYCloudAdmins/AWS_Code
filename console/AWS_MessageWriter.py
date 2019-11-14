@@ -50,9 +50,9 @@ class messageSection:
         self.footerText = footerText
 
     def __str__(self):
-        retStr = f'''<h2>{self.headerText}<h2><br><br>\n
-        <p>{self.descriptionText}</p><br><br>\n
-        {self.messageText}<br><br>\n{self.footerText}'''
+        retStr = f'''<h2>{self.headerText}<h2>
+        <p>{self.descriptionText}</p>
+        {self.messageText}\n{self.footerText}'''
         
         return retStr
 
